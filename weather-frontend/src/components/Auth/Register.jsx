@@ -52,6 +52,7 @@ function Register() {
         username: form.username,
         email: form.email,
         password: form.password,
+        password2: form.password2,
       });
       setSuccess("Registration successful. Redirecting to dashboard...");
       // Optionally, implement redirection or auto-login here
