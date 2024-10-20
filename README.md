@@ -374,3 +374,7 @@ This application uses Celery to manage scheduled tasks. Below are the tasks that
 - Add cities to monitor weather data.
 - Set thresholds to receive weather alerts based on temperature or conditions.
 - Access city weather data, forecast data, and user preferences via the provided API endpoints.
+
+## Contributing
+
+Feel free to open issues or submit pull requests if you find bugs or have features to add. Make sure to follow the code style and include tests when applicable.
