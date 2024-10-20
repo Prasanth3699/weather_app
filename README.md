@@ -175,39 +175,39 @@ The frontend will be running on `http://127.0.0.1:5173/`.
 
 ### Authentication
 
-- **POST** `/api/register/` - Register a new user.
-- **POST** `/api/token/` - Obtain JWT token.
-- **POST** `/api/token/refresh/` - Refresh JWT token.
+- **POST** `/api/v1/register/` - Register a new user.
+- **POST** `/api/v1/token/` - Obtain JWT token.
+- **POST** `/api/v1/token/refresh/` - Refresh JWT token.
 
 ### City Endpoints
 
-- **GET** `/api/cities/` - List all cities.
-- **GET** `/api/cities/{id}/` - Get details of a specific city.
+- **GET** `/api/v1/cities/` - List all cities.
+- **GET** `/api/v1/cities/{id}/` - Get details of a specific city.
 
 ### Weather Data Endpoints
 
-- **GET** `/api/weather-data/` - List all weather data with pagination.
-- **GET** `/api/weather-data/latest/` - Get the latest weather data for a specific city.
-- **GET** `/api/weather-data/{id}/` - Get specific weather data by ID.
-- **GET** `/api/weather-data/latest/all/` - Get the latest weather data for all cities.
+- **GET** `/api/v1/weather-data/` - List all weather data with pagination.
+- **GET** `/api/v1/weather-data/latest/` - Get the latest weather data for a specific city.
+- **GET** `/api/v1/weather-data/{id}/` - Get specific weather data by ID.
+- **GET** `/api/v1/weather-data/latest/all/` - Get the latest weather data for all cities.
 
 ### Forecast Data Endpoints
 
-- **GET** `/api/forecast/` - List all forecast data from today onwards with optional filtering by city.
+- **GET** `/api/v1/forecast/` - List all forecast data from today onwards with optional filtering by city.
 
 ### User Preferences
 
-- **GET/PUT** `/api/preferences/` - Retrieve or update user preferences (e.g., temperature unit).
+- **GET/PUT** `/api/v1/preferences/` - Retrieve or update user preferences (e.g., temperature unit).
 
 ### Thresholds
 
-- **GET/POST** `/api/thresholds/` - List or create thresholds for weather alerts.
-- **GET/PUT/DELETE** `/api/thresholds/{id}/` - Retrieve, update, or delete a specific threshold.
+- **GET/POST** `/api/v1/thresholds/` - List or create thresholds for weather alerts.
+- **GET/PUT/DELETE** `/api/v1/thresholds/{id}/` - Retrieve, update, or delete a specific threshold.
 
 ### Alerts
 
-- **GET** `/api/alerts/` - List all alerts for the authenticated user.
-- **GET** `/api/alerts/{id}/` - Retrieve a specific alert by ID.
+- **GET** `/api/v1/alerts/` - List all alerts for the authenticated user.
+- **GET** `/api/v1/alerts/{id}/` - Retrieve a specific alert by ID.
 
 ## Scheduled Tasks
 
@@ -221,7 +221,7 @@ This application uses Celery to manage scheduled tasks. Below are the tasks that
 
 ## Usage
 
-- Register a new user via `/api/register/` or the Django admin panel.
+- Register a new user via `/api/v1/register/` or the Django admin panel.
 - Add cities to monitor weather data.
 - Set thresholds to receive weather alerts based on temperature or conditions.
 - Access city weather data, forecast data, and user preferences via the provided API endpoints.
