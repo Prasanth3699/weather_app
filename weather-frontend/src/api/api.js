@@ -90,6 +90,11 @@ export const login = (username, password) =>
  * Fetch the list of all available cities.
  */
 export const fetchCities = () => api.get("cities/");
+// Add a new city
+export const addCity = (cityData) => api.post("city/add/", cityData);
+
+//  Delete City Endpoint
+export const deleteCity = (cityId) => api.delete(`city/delete/${cityId}/`);
 
 /// --- Weather Data Endpoints --- ///
 

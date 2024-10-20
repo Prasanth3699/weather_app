@@ -1,18 +1,23 @@
+// Dashboard.js
+
 import { useEffect, useState, useContext } from "react";
-import { motion } from "framer-motion"; // Import Framer Motion
+import Modal from "react-modal";
+import { FaPlus, FaTrash } from "react-icons/fa";
+import { motion } from "framer-motion";
 import DailySummaries from "./DailySummaries";
 import HistoricalTrends from "./HistoricalTrends";
 import Alerts from "./Alerts";
 import Forecast from "./Forecast";
 import {
   fetchCities,
+  addCity,
+  deleteCity,
   fetchDailySummariesByCity,
   fetchLatestWeatherDataByCity,
   fetchAlertsByCity,
   fetchForecastDataByCity,
 } from "../api/api";
 import { UserPreferencesContext } from "../contexts/UserPreferencesContext";
-// import { WiDaySunny, WiCloudy } from "react-icons/wi";
 import windIcon from "../assets/wind.png";
 import conditionIcon from "../assets/condition.png";
 import temperatureFeelsLikeIcon from "../assets/temperature_feels_like.png";
@@ -26,6 +31,9 @@ import sunnyIcon from "../assets/sunny.png";
 import drizzleRainIcon from "../assets/drizzle_rain.png";
 import thunderstormIcon from "../assets/thunderstorm.png";
 
+// Set the modal's root element (important for accessibility)
+Modal.setAppElement("#root");
+
 function Dashboard() {
   const preferences = useContext(UserPreferencesContext);
   const [cities, setCities] = useState([]);
@@ -33,8 +41,16 @@ function Dashboard() {
     () => JSON.parse(localStorage.getItem("selectedCityId")) || null // Load from local storage
   );
   const [cityData, setCityData] = useState({});
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [newCity, setNewCity] = useState({ name: "", country_code: "" });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // State variables for delete confirmation
+  const [cityToDelete, setCityToDelete] = useState(null);
+  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
+    useState(false);
 
   /**
    * Fetch all available cities from the API.
@@ -49,6 +65,64 @@ function Dashboard() {
     } catch (err) {
       console.error("Error fetching cities:", err);
       setError("Failed to fetch cities.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openAddModal = () => setIsAddModalOpen(true);
+  const closeAddModal = () => setIsAddModalOpen(false);
+
+  const openDeleteModal = () => setIsDeleteModalOpen(true);
+  const closeDeleteModal = () => setIsDeleteModalOpen(false);
+
+  const openConfirmDeleteModal = (city) => {
+    setCityToDelete(city);
+    setIsConfirmDeleteModalOpen(true);
+  };
+  const closeConfirmDeleteModal = () => {
+    setCityToDelete(null);
+    setIsConfirmDeleteModalOpen(false);
+  };
+
+  /**
+   * Handles input changes for the new city form in the modal.
+   * @param {object} e - The event object.
+   */
+  const handleNewCityChange = (e) => {
+    const { name, value } = e.target;
+    setNewCity((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAddCity = async () => {
+    try {
+      await addCity(newCity); // Call the API to add a new city
+      setNewCity({ name: "", country_code: "" }); // Reset form inputs
+      closeAddModal(); // Close the modal after adding the city
+      getCities(); // Refresh the city list
+    } catch (err) {
+      console.error("Error adding city:", err);
+      setError("Failed to add city.");
+    }
+  };
+
+  const confirmDeleteCity = async () => {
+    try {
+      await deleteCity(cityToDelete.id); // Call the API to delete the city
+      getCities(); // Refresh the city list
+      // If the deleted city is the currently selected city, reset the selection
+      if (selectedCityId === cityToDelete.id) {
+        setSelectedCityId(null);
+        localStorage.removeItem("selectedCityId");
+      }
+      closeConfirmDeleteModal(); // Close the confirmation modal after deletion
+    } catch (err) {
+      console.error("Error deleting city:", err);
+      setError("Failed to delete city.");
+      closeConfirmDeleteModal(); // Close the modal even if there's an error
     }
   };
 
@@ -234,7 +308,10 @@ function Dashboard() {
       animate="visible"
     >
       {/* City Selection Dropdown */}
-      <motion.div variants={sectionVariants} className="flex justify-center">
+      <motion.div
+        variants={sectionVariants}
+        className="flex justify-center items-center space-x-4"
+      >
         <select
           value={selectedCityId || ""}
           onChange={handleCityChange}
@@ -246,7 +323,128 @@ function Dashboard() {
             </option>
           ))}
         </select>
+        {/* Plus Icon to open the Add City modal */}
+        <FaPlus
+          className="text-blue-500 cursor-pointer"
+          size={24}
+          onClick={openAddModal}
+          aria-label="Add City"
+        />
+        {/* Trash Icon to open the Delete Cities modal */}
+        <FaTrash
+          className="text-red-300 cursor-pointer"
+          size={24}
+          onClick={openDeleteModal}
+          aria-label="Delete City"
+        />
       </motion.div>
+
+      {/* Modal for Adding a New City */}
+      <Modal
+        isOpen={isAddModalOpen}
+        onRequestClose={closeAddModal}
+        contentLabel="Add City Modal"
+        className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <h2 className="text-2xl font-semibold mb-4">Add New City</h2>
+
+        <input
+          type="text"
+          name="name"
+          placeholder="City Name"
+          value={newCity.name}
+          onChange={handleNewCityChange}
+          className="w-full px-4 py-2 border rounded-md mb-4"
+        />
+
+        <input
+          type="text"
+          name="country_code"
+          placeholder="Country Code"
+          value={newCity.country_code}
+          onChange={handleNewCityChange}
+          className="w-full px-4 py-2 border rounded-md mb-4"
+        />
+
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={handleAddCity} // Add the city
+            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+          >
+            Add
+          </button>
+          <button
+            onClick={closeAddModal} // Close the modal
+            className="px-4 py-2 bg-gray-300 rounded-md"
+          >
+            Cancel
+          </button>
+        </div>
+      </Modal>
+
+      {/* Modal for Deleting Cities */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onRequestClose={closeDeleteModal}
+        contentLabel="Delete Cities Modal"
+        className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <h2 className="text-2xl font-semibold mb-4">Delete Cities</h2>
+        <ul className="space-y-2">
+          {cities.map((city) => (
+            <li key={city.id} className="flex justify-between items-center">
+              <span>{city.name}</span>
+              <FaTrash
+                className="text-red-500 cursor-pointer"
+                size={20}
+                onClick={() => openConfirmDeleteModal(city)} // Open the confirm delete modal
+                aria-label={`Delete ${city.name}`}
+              />
+            </li>
+          ))}
+        </ul>
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={closeDeleteModal} // Close the modal
+            className="px-4 py-2 bg-gray-300 rounded-md"
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
+
+      {/* Confirm Delete Modal */}
+      <Modal
+        isOpen={isConfirmDeleteModalOpen}
+        onRequestClose={closeConfirmDeleteModal}
+        contentLabel="Confirm Delete Modal"
+        className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <h2 className="text-2xl font-semibold mb-4">Confirm Delete</h2>
+        <p>
+          Are you sure you want to delete <strong>{cityToDelete?.name}</strong>?
+        </p>
+        <div className="flex justify-end space-x-4 mt-4">
+          <button
+            onClick={confirmDeleteCity} // Confirm deletion
+            className="px-4 py-2 bg-red-500 text-white rounded-md"
+          >
+            Delete
+          </button>
+          <button
+            onClick={closeConfirmDeleteModal} // Cancel deletion
+            className="px-4 py-2 bg-gray-300 rounded-md"
+          >
+            Cancel
+          </button>
+        </div>
+      </Modal>
+
+      {/* Error Message */}
+      {error && <p className="text-red-500">{error}</p>}
 
       {/* Weather Data Section */}
       <motion.section variants={sectionVariants}>
@@ -292,6 +490,7 @@ function Dashboard() {
                   {convertTemperature(data.latestWeather?.temp).toFixed(0)}°
                 </span>
                 <span className="ml-4 text-4xl">
+                  {/* Display appropriate weather icon */}
                   {data.latestWeather?.main?.toLowerCase() === "clear" && (
                     <img src={clearIcon} alt="clear" className="w-20 h-20" />
                   )}
@@ -397,25 +596,10 @@ function Dashboard() {
               </div>
             </div>
           )}
-
-          {/* Sunrise and Sunset */}
-          {/* {data.latestWeather && (
-            <div className="flex justify-between items-center mt-6 text-sm">
-              <div className="flex items-center space-x-1">
-                <WiDaySunny size={24} />
-                <span>Rise: {data.latestWeather?.sunrise}</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <WiCloudy size={24} />
-                <span>Set: {data.latestWeather?.sunset}</span>
-              </div>
-            </div>
-          )} */}
         </div>
       </motion.section>
 
       {/* Alerts Section */}
-      {/* Conditionally render Alerts if alerts data is available */}
       {Array.isArray(data.alerts) && data.alerts.length > 0 && (
         <motion.section variants={sectionVariants}>
           <Alerts alerts={data.alerts} />
@@ -423,7 +607,6 @@ function Dashboard() {
       )}
 
       {/* Historical Trends and Forecast */}
-      {/* Adjust the grid based on the availability of HistoricalTrends and Forecast */}
       {(Array.isArray(data.dailySummaries) && data.dailySummaries.length > 0) ||
       (Array.isArray(data.forecast) && data.forecast.length > 0) ? (
         <motion.section

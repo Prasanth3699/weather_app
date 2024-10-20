@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.utils.timezone import now
 from django.contrib.auth.models import User
+from .tasks import fetch_weather_data, fetch_forecast_data, aggregate_daily_summary
 from .models import (
     City, WeatherData, DailySummary, Threshold, Alert, UserPreference, ForecastData
 )
@@ -57,6 +58,39 @@ def city_list(request):
         logger.error(f"Error fetching city list: {str(e)}", exc_info=True)
         return Response({"error": "Internal server error."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_city(request):
+    """
+    Add a new city record.
+    """
+    serializer = CitySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        fetch_weather_data.delay()
+        fetch_forecast_data.delay()
+        aggregate_daily_summary.delay()
+        logger.info(f"City {serializer.data['name']} added successfully.")
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    logger.warning(f"Failed to add city: {serializer.errors}")
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_city(request, pk):
+    """
+    Delete a city record by ID.
+    """
+    try:
+        city = City.objects.get(pk=pk)
+        city.delete()
+        logger.info(f"City with ID {pk} deleted successfully.")
+        return Response({"message": "City deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    except City.DoesNotExist:
+        logger.warning(f"Attempted to delete non-existent city with ID {pk}.")
+        return Response({"error": "City not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+    
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

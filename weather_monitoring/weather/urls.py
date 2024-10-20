@@ -12,6 +12,8 @@ urlpatterns = [
     # City Endpoints
     path('cities/', views.city_list, name='city-list'),
     path('cities/<int:pk>/', views.city_detail, name='city-detail'),
+    path('city/add/', views.add_city, name='add_city'),
+    path('city/delete/<int:pk>/', views.delete_city, name='delete_city'),
 
     # DailySummary Endpoints
     path('daily-summaries/', views.daily_summary_list, name='dailysummary-list'),

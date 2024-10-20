@@ -357,7 +357,6 @@ def check_alerts(city, current_temp, current_condition):
 
                     
 
-from django.utils import timezone as dj_timezone
 @shared_task
 def cleanup_old_weather_data():
     """
@@ -405,11 +404,3 @@ def deactivate_old_alerts():
     else:
         logger.info("No alerts to deactivate at this time.")
         
-def deactivate_alerts(city):
-    # Example function to deactivate alerts when conditions are no longer met
-    active_alerts = Alert.objects.filter(city=city, is_active=True)
-    for alert in active_alerts:
-        # Logic to determine if the alert should be deactivated
-        # For simplicity, deactivate all active alerts for the city
-        alert.is_active = False
-        alert.save()
