@@ -1,5 +1,3 @@
-// Dashboard.js
-
 import { useEffect, useState, useContext } from "react";
 import Modal from "react-modal";
 import { FaPlus, FaTrash } from "react-icons/fa";
@@ -7,7 +5,7 @@ import { motion } from "framer-motion";
 import DailySummaries from "./DailySummaries";
 import HistoricalTrends from "./HistoricalTrends";
 import Alerts from "./Alerts";
-import Forecast from "./Forecast";
+import Forecast from "../Forecast/Forecast";
 import {
   fetchCities,
   addCity,
@@ -16,20 +14,20 @@ import {
   fetchLatestWeatherDataByCity,
   fetchAlertsByCity,
   fetchForecastDataByCity,
-} from "../api/api";
+} from "../../api/api";
 import { UserPreferencesContext } from "../contexts/UserPreferencesContext";
-import windIcon from "../assets/wind.png";
-import conditionIcon from "../assets/condition.png";
-import temperatureFeelsLikeIcon from "../assets/temperature_feels_like.png";
-import humidityIcon from "../assets/humidity.png";
-import rainIcon from "../assets/rain.png";
-import clearIcon from "../assets/clear.png";
-import dayMistIcon from "../assets/day_mist.png";
-import snowIcon from "../assets/snow.png";
-import hazeIcon from "../assets/haze.png";
-import sunnyIcon from "../assets/sunny.png";
-import drizzleRainIcon from "../assets/drizzle_rain.png";
-import thunderstormIcon from "../assets/thunderstorm.png";
+import windIcon from "../../assets/wind.png";
+import conditionIcon from "../../assets/condition.png";
+import temperatureFeelsLikeIcon from "../../assets/temperature_feels_like.png";
+import humidityIcon from "../../assets/humidity.png";
+import rainIcon from "../../assets/rain.png";
+import clearIcon from "../../assets/clear.png";
+import dayMistIcon from "../../assets/day_mist.png";
+import snowIcon from "../../assets/snow.png";
+import hazeIcon from "../../assets/haze.png";
+import sunnyIcon from "../../assets/sunny.png";
+import drizzleRainIcon from "../../assets/drizzle_rain.png";
+import thunderstormIcon from "../../assets/thunderstorm.png";
 
 // Set the modal's root element (important for accessibility)
 Modal.setAppElement("#root");

@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 import { createContext, useState, useEffect } from "react";
-import { register as apiRegister, login as apiLogin } from "../api/api";
+import { register as apiRegister, login as apiLogin } from "../../api/api";
 import { useNavigate } from "react-router-dom";
 
 // Create the Auth Context

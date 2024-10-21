@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "./components/Layout/Navbar";
+import Footer from "./components/Layout/Footer";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
-import Dashboard from "./components/Dashboard";
-import Thresholds from "./components/Thresholds";
-import Alerts from "./components/Alerts";
-import ErrorBoundary from "./components/ErrorBoundary";
-import ProtectedRoute from "./components/ProtectedRoute";
-import NotFound from "./components/NotFound";
+import Dashboard from "./components/Dashboard/Dashboard";
+import Thresholds from "./components/Dashboard/Thresholds";
+import Alerts from "./components/Dashboard/Alerts";
+import ErrorBoundary from "./components/Layout/ErrorBoundary";
+import ProtectedRoute from "./components/Routing/ProtectedRoute";
+import NotFound from "./components/Routing/NotFound";
 import { fetchAlerts } from "./api/api";
 import { AnimatePresence } from "framer-motion";
 

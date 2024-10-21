@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext";
 import { FaUser, FaLock } from "react-icons/fa"; // Import React Icons
 import { motion } from "framer-motion"; // Import Framer Motion
 import { Link } from "react-router-dom"; // Import Link for navigation

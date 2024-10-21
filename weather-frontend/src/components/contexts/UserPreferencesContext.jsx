@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState, useEffect } from "react";
-import { fetchUserPreferences } from "../api/api";
+import { fetchUserPreferences } from "../../api/api";
 
 export const UserPreferencesContext = createContext();
 

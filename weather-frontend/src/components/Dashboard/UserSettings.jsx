@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { UserPreferencesContext } from "../contexts/UserPreferencesContext";
+import { UserPreferencesContext } from "../../contexts/UserPreferencesContext";
 
 function UserSettings() {
   const { temp_unit, setTempUnit } = useContext(UserPreferencesContext);

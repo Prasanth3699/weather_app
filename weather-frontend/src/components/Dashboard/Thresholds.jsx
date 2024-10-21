@@ -5,7 +5,7 @@ import {
   createThreshold,
   updateThreshold,
   deleteThreshold,
-} from "../api/api";
+} from "../../api/api";
 import { UserPreferencesContext } from "../contexts/UserPreferencesContext";
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import React Icons
 import { motion } from "framer-motion"; // Import Framer Motion
